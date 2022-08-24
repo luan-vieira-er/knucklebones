@@ -1,10 +1,35 @@
 <template>
     <div>
-        Player {{player}} Dice: {{value}}
+        Player {{player}}
 
-        <button :disabled="!isRollable" @click="roll">
-            Roll
-        </button>
+        <v-progress-circular v-if="isRolling"
+            :size="50"
+            color="primary"
+            indeterminate
+            ></v-progress-circular>
+        <v-btn v-if="value"
+            dark
+            color="indigo"
+            >
+            <v-icon dark >
+                mdi-dice-{{value}}
+            </v-icon>
+        </v-btn>
+        
+
+        <v-btn
+            v-if="isRollable"
+            @click="roll"
+            class="mx-2"
+            fab
+            dark
+            color="indigo"
+            >
+                <v-icon dark>
+                    mdi-dice-multiple-outline
+                </v-icon>
+            </v-btn>
+
 
         <div v-if="isAddable">
             <label for="columns">Coluna:</label>
@@ -31,7 +56,8 @@ export default {
             value: 0,
             isRollable: false,
             isAddable: false,
-            column: 0
+            column: 0,
+            isRolling: false
         }
     },
     props:{
@@ -39,9 +65,15 @@ export default {
     },
     methods: {
         roll(){
-            this.value = Math.floor(Math.random() * 6) + 1
+            this.value == 0
             this.isRollable = false
-            this.isAddable = true
+            this.isRolling = true
+            setTimeout(() => {
+                this.value = Math.floor(Math.random() * 6) + 1
+                this.isAddable = true
+                this.isRolling = false
+            }, 2000);
+            
         },
         moveOk(isOk){
             if (isOk){

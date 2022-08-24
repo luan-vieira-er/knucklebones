@@ -1,14 +1,27 @@
 <template>
     <div>
-        <button @click="NewGame" v-if="!isGoing">
-            New Game
-        </button>
+        <v-btn
+            v-if="!isGoing"
+            @click="NewGame"
+            class="mx-2"
+            fab
+            dark
+            color="indigo"
+            >
+                <v-icon dark>
+                    mdi-plus
+                </v-icon>
+            </v-btn>
 
         <br>
 
         <div v-if="isFinished">
             FIM DE JOGO!
             {{placar0}} x {{placar1}}
+
+            <p v-if="placar0 > placar1">Player 0 Venceu</p>
+            <p v-else-if="placar1 > placar0">Player 0 Venceu</p>
+            <p v-else>Empate</p>
         </div>
 
         <br>
