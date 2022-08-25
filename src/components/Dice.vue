@@ -80,7 +80,7 @@ export default {
                 this.value = Math.floor(Math.random() * 6) + 1
                 this.isAddable = true
                 this.isRolling = false
-            }, 2000);
+            }, 1000);
             
         },
         moveOk(isOk){

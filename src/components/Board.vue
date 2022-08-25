@@ -106,6 +106,10 @@ export default {
             this.showNames = true
         },
         StartGame(){
+            if(!this.Player1.Name || !this.Player2.Name){
+                console.log('erro')
+                return
+            }
             this.showNames = false
             this.isGoing = true
             this.isFinished = false

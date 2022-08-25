@@ -1,8 +1,19 @@
 import Vue from 'vue'
 import App from './App.vue'
-import vuetify from './plugins/vuetify'
+
+import Vuetify from 'vuetify/lib'
+
+//import vuetify from './plugins/vuetify'
 
 Vue.config.productionTip = false
+
+Vue.use(Vuetify)
+
+const vuetify = new Vuetify({
+  theme: {
+    dark: true
+  }
+})
 
 new Vue({
   vuetify,

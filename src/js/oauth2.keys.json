@@ -1,0 +1,18 @@
+{
+    "web": {
+        "client_id": "417120747042-uhtf4u5fo4jsj29hnuap3e0o81hegctv.apps.googleusercontent.com",
+        "project_id": "app-pm-356213",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret": "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",
+        "redirect_uris": [
+            "https://app-pm.herokuapp.com/",
+            "http://localhost:8080"
+        ],
+        "javascript_origins": [
+            "https://app-pm.herokuapp.com",
+            "http://localhost:8080"
+        ]
+    }
+}
