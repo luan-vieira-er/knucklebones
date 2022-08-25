@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <LogoComponent />
+    <p v-if="User">Bem-vindo, {{User.login}}</p>
     <BoardComponent />
   </v-container>
 </template>
@@ -9,11 +10,15 @@
 
 import LogoComponent from './Logo.vue'
 import BoardComponent from './Board.vue'
+
   export default {
-    name: 'HelloWorld',
+    name: 'HomeLogged',
     components: {
       LogoComponent,
       BoardComponent
+    },
+    props:{
+      User: Object
     },
     data: () => ({
       ecosystem: [

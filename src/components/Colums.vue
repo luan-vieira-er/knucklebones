@@ -5,7 +5,7 @@
         <br>
         <v-row>
             <v-col>
-                <div class="mt-1" v-for="dice in ColumnA" :key="dice">
+                <div class="mt-1" v-for="(dice, index) in ColumnA" :key="index">
                     <v-btn v-if="dice.value"
                         dark
                         :color="dice.color"
@@ -25,7 +25,7 @@
                 </div>
             </v-col>
             <v-col>
-                <div class="mt-1" v-for="dice in ColumnB" :key="dice">
+                <div class="mt-1" v-for="(dice, index) in ColumnB" :key="index">
                     <v-btn v-if="dice.value"
                         dark
                         :color="dice.color"
@@ -45,7 +45,7 @@
                 </div>
             </v-col>
             <v-col>
-                <div class="mt-1" v-for="dice in ColumnC" :key="dice">
+                <div class="mt-1" v-for="(dice, index) in ColumnC" :key="index">
                     <v-btn v-if="dice.value"
                         dark
                         :color="dice.color"
