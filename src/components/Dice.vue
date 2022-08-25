@@ -1,49 +1,57 @@
 <template>
     <div>
-        Player {{player}}
-
-        <v-progress-circular v-if="isRolling"
-            :size="50"
-            color="primary"
-            indeterminate
-            ></v-progress-circular>
-        <v-btn v-if="value"
-            dark
-            color="indigo"
-            >
-            <v-icon dark >
-                mdi-dice-{{value}}
-            </v-icon>
-        </v-btn>
-        
-
-        <v-btn
-            v-if="isRollable"
-            @click="roll"
-            class="mx-2"
-            fab
-            dark
-            color="indigo"
-            >
-                <v-icon dark>
-                    mdi-dice-multiple-outline
-                </v-icon>
-            </v-btn>
-
-
-        <div v-if="isAddable">
-            <label for="columns">Coluna:</label>
-            <select name="columns" id="columns" form="columns" v-model="column">
-                <option :value="0">1</option>
-                <option :value="1">2</option>
-                <option :value="2">3</option>
-            </select>
-
-            <button :disabled="!isAddable" @click="add">
-                Add
-            </button>
-        </div>
-        
+        <h1 v-if="isRollable || isAddable">Rodada de {{Player.Name}}</h1>
+        <v-row>
+            <v-col>
+                <v-progress-circular v-if="isRolling"
+                    :size="50"
+                    color="primary"
+                    indeterminate
+                    ></v-progress-circular>
+                <v-btn v-if="value"
+                    dark
+                    color="indigo"
+                    >
+                    Dado Sorteado:   <v-icon dark >
+                        mdi-dice-{{value}}
+                    </v-icon>
+                </v-btn>
+            </v-col>
+            <v-col>
+                <v-btn
+                    v-if="isRollable"
+                    @click="roll"
+                    class="mx-2"
+                    dark
+                    color="indigo"
+                    > Rolar 
+                        <v-icon dark>
+                            mdi-dice-multiple-outline
+                        </v-icon>
+                    </v-btn>
+            </v-col>
+            <v-col v-if="isAddable">
+                <v-select
+                    :items="[{text:'A', value:0},{text:'B', value:1},{text:'C', value:2}]"
+                    filled
+                    v-model="column"
+                    label="Coluna"
+                    ></v-select>
+            </v-col>
+            <v-col v-if="isAddable">
+                <v-btn
+                    :disabled="!isAddable" @click="add"
+                    class="mx-2"
+                    fab
+                    dark
+                    color="indigo"
+                    >
+                        <v-icon dark>
+                            mdi-plus
+                        </v-icon>
+                    </v-btn>
+            </v-col>
+        </v-row>
         
     </div>
 </template>
@@ -61,7 +69,7 @@ export default {
         }
     },
     props:{
-        player: Number
+        Player: Object
     },
     methods: {
         roll(){
@@ -87,7 +95,7 @@ export default {
             const valor = this.value;
             const coluna = this.column;
             this.isRollable = false
-            this.$emit('MoveDone', this.player, coluna, valor)
+            this.$emit('MoveDone', this.Player.id, coluna, valor)
         },
         setRollable(isRollable){
             this.isRollable = isRollable

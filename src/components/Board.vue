@@ -1,13 +1,12 @@
 <template>
     <div>
         <v-btn
-            v-if="!isGoing"
+            v-if="!isGoing && !showNames"
             @click="NewGame"
             class="mx-2"
-            fab
             dark
             color="indigo"
-            >
+            > Novo Jogo
                 <v-icon dark>
                     mdi-plus
                 </v-icon>
@@ -15,25 +14,60 @@
 
         <br>
 
+        <v-row v-if="showNames">
+            <v-col
+            cols="12"
+            sm="6"
+            md="3"
+            >
+            <v-text-field v-model="Player1.Name"
+                label="Player 1"
+            ></v-text-field>
+            </v-col>
+            <v-col
+            cols="12"
+            sm="6"
+            md="3"
+            >
+            <v-text-field v-model="Player2.Name"
+                label="Player 2"
+            ></v-text-field>
+            </v-col>
+            <v-col>
+                <v-btn
+                @click="StartGame"
+                class="mx-2"
+                dark
+                color="indigo"
+                > Novo Jogo
+                    <v-icon dark>
+                        mdi-plus
+                    </v-icon>
+                </v-btn>
+            </v-col>
+        </v-row>
+
+
         <div v-if="isFinished">
             FIM DE JOGO!
-            {{placar0}} x {{placar1}}
+            {{Player1.Placar}} x {{Player2.Placar}}
 
-            <p v-if="placar0 > placar1">Player 0 Venceu</p>
-            <p v-else-if="placar1 > placar0">Player 0 Venceu</p>
+            <p v-if="Player1.Placar > Player2.Placar">{{Player1.Name}} Venceu</p>
+            <p v-else-if="Player2.Placar > Player1.Placar">{{Player2.Name}}  Venceu</p>
             <p v-else>Empate</p>
         </div>
 
         <br>
 
         <div v-show="isGoing">
-            {{placar0}} x {{placar1}}
+            {{Player1.Placar}} x {{Player2.Placar}}
             <br>
-            <ColumnsComponent :player="0" ref="ColumnsPlayer1" v-on:FimDeJogo="FimDeJogo" v-on:AtualizaPlacar="AtualizaPlacar" />
-            <ColumnsComponent :player="1" ref="ColumnsPlayer2" v-on:FimDeJogo="FimDeJogo" v-on:AtualizaPlacar="AtualizaPlacar" />
+            <DiceComponent :Player="Player1" ref="DicePlayer1" v-on:MoveDone="MoveDone" />
+            <DiceComponent :Player="Player2" ref="DicePlayer2" v-on:MoveDone="MoveDone" />
             <br>
-            <DiceComponent :player="0" ref="DicePlayer1" v-on:MoveDone="MoveDone" />
-            <DiceComponent :player="1" ref="DicePlayer2" v-on:MoveDone="MoveDone" />
+            <ColumnsComponent :Player="Player1" ref="ColumnsPlayer1" v-on:FimDeJogo="FimDeJogo" v-on:AtualizaPlacar="AtualizaPlacar" />
+            <ColumnsComponent :Player="Player2" ref="ColumnsPlayer2" v-on:FimDeJogo="FimDeJogo" v-on:AtualizaPlacar="AtualizaPlacar" />
+            <br>
         </div>
     </div>
 </template>
@@ -48,10 +82,19 @@ export default {
     return {
       dice: true,
       playerStarting: null,
-      placar0:0,
-      placar1:0,
+      Player1: {
+        id: 0,
+        Name: null,
+        Placar: 0
+      },
+      Player2: {
+        id: 1,
+        Name: null,
+        Placar: 0
+      },
       isGoing: false,
       isFinished: false,
+      showNames: false,
     }
     },
     components: {
@@ -60,6 +103,10 @@ export default {
     },
     methods:{
         NewGame(){
+            this.showNames = true
+        },
+        StartGame(){
+            this.showNames = false
             this.isGoing = true
             this.isFinished = false
             this.playerStarting = Math.floor(Math.random() * 2)
@@ -133,9 +180,9 @@ export default {
         },
         AtualizaPlacar(player, placar){
             if (player == 0){
-                this.placar0 = placar
+                this.Player1.Placar = placar
             } else {
-                this.placar1 = placar
+                this.Player2.Placar = placar
             }
         }
     }

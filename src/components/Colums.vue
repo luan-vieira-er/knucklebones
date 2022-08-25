@@ -1,14 +1,14 @@
 <template>
     <div>
         <br>
-        Player {{player}} Columns:
+        {{Player.Name}}:
         <br>
         <v-row>
             <v-col>
                 <div class="mt-1" v-for="dice in ColumnA" :key="dice">
                     <v-btn v-if="dice.value"
                         dark
-                        color="indigo"
+                        :color="dice.color"
                         >
                         <v-icon dark >
                             mdi-dice-{{dice.value}}
@@ -28,7 +28,7 @@
                 <div class="mt-1" v-for="dice in ColumnB" :key="dice">
                     <v-btn v-if="dice.value"
                         dark
-                        color="indigo"
+                        :color="dice.color"
                         >
                         <v-icon dark >
                             mdi-dice-{{dice.value}}
@@ -48,7 +48,7 @@
                 <div class="mt-1" v-for="dice in ColumnC" :key="dice">
                     <v-btn v-if="dice.value"
                         dark
-                        color="indigo"
+                        :color="dice.color"
                         >
                         <v-icon dark >
                             mdi-dice-{{dice.value}}
@@ -76,24 +76,51 @@ export default {
     data(){
         return {
             ColumnA: [
-                {value: null},
-                {value: null},
-                {value: null},
+                {
+                    value: null,
+                    color:"indigo"
+                },
+                {
+                    value: null,
+                    color:"indigo"
+                },
+                {
+                    value: null,
+                    color:"indigo"
+                },
             ],
             ColumnB: [
-                {value: null},
-                {value: null},
-                {value: null},
+                {
+                    value: null,
+                    color:"indigo"
+                },
+                {
+                    value: null,
+                    color:"indigo"
+                },
+                {
+                    value: null,
+                    color:"indigo"
+                },
             ],
             ColumnC: [
-                {value: null},
-                {value: null},
-                {value: null},
+                {
+                    value: null,
+                    color:"indigo"
+                },
+                {
+                    value: null,
+                    color:"indigo"
+                },
+                {
+                    value: null,
+                    color:"indigo"
+                },
             ]
         }
     },
     props:{
-        player: Number
+        Player: Object
     },
     methods: {
         async canAdd(column){
@@ -117,6 +144,7 @@ export default {
                 for (let i in this.ColumnA){
                     if (this.ColumnA[i].value == null){
                         this.ColumnA[i].value = value
+                        this.ColumnA[i].color = "blue"
                         this.AtualizaPlacar()
                         return
                     }
@@ -125,6 +153,7 @@ export default {
                 for (let i in this.ColumnB){
                     if (this.ColumnB[i].value == null){
                         this.ColumnB[i].value = value
+                        this.ColumnB[i].color = "blue"
                         this.AtualizaPlacar()
                         return
                     }
@@ -133,6 +162,7 @@ export default {
                 for (let i in this.ColumnC){
                     if (this.ColumnC[i].value == null){
                         this.ColumnC[i].value = value
+                        this.ColumnC[i].color = "blue"
                         this.AtualizaPlacar()
                         return
                     }
@@ -144,18 +174,21 @@ export default {
                 for (let i in this.ColumnA){
                     if (this.ColumnA[i].value == value){
                         this.ColumnA[i].value = null
+                        this.ColumnA[i].color = "indigo"
                     }
                 }
             } else if (column == 1) {
                 for (let i in this.ColumnB){
                     if (this.ColumnB[i].value == value){
                         this.ColumnB[i].value = null
+                        this.ColumnB[i].color = "indigo"
                     }
                 }
             } else if (column == 2) {
                 for (let i in this.ColumnC){
                     if (this.ColumnC[i].value == value){
                         this.ColumnC[i].value = null
+                        this.ColumnC[i].color = "indigo"
                     }
                 }
             }
@@ -173,13 +206,23 @@ export default {
             if(this.ColumnA[0].value == this.ColumnA[1].value && this.ColumnA[0].value == this.ColumnA[2].value){
                 totalMulti = this.ColumnA[0].value * 3
                 totalMulti += totalMulti
+
+                this.ColumnA[0].color = "red"
+                this.ColumnA[1].color = "red"
+                this.ColumnA[2].color = "red"
             } else {
-                if(this.ColumnA[0].value == this.ColumnA[1].value || this.ColumnA[0].value == this.ColumnA[2].value){
+                if (this.ColumnA[0].value == this.ColumnA[1].value){
                     totalMulti = this.ColumnA[0].value * 2
-                } else {
-                    if(this.ColumnA[1].value == this.ColumnA[2].value){
-                        totalMulti = this.ColumnA[1].value * 2
-                    }
+                    this.ColumnA[0].color = "green"
+                    this.ColumnA[1].color = "green"
+                } else if (this.ColumnA[0].value == this.ColumnA[2].value){
+                    totalMulti = this.ColumnA[0].value * 2
+                    this.ColumnA[0].color = "green"
+                    this.ColumnA[2].color = "green"
+                } else if(this.ColumnA[1].value == this.ColumnA[2].value){
+                    totalMulti = this.ColumnA[1].value * 2
+                    this.ColumnA[1].color = "green"
+                    this.ColumnA[2].color = "green"
                 }
             }
 
@@ -194,13 +237,24 @@ export default {
 
             if(this.ColumnB[0].value == this.ColumnB[1].value && this.ColumnB[0].value == this.ColumnB[2].value){
                 totalMulti = this.ColumnB[0].value * 3
+                totalMulti += totalMulti
+
+                this.ColumnB[0].color = "red"
+                this.ColumnB[1].color = "red"
+                this.ColumnB[2].color = "red"
             } else {
-                if(this.ColumnB[0].value == this.ColumnB[1].value || this.ColumnB[0].value == this.ColumnB[2].value){
+                if (this.ColumnB[0].value == this.ColumnB[1].value){
                     totalMulti = this.ColumnB[0].value * 2
-                } else {
-                    if(this.ColumnB[1].value == this.ColumnB[2].value){
-                        totalMulti = this.ColumnB[1].value * 2
-                    }
+                    this.ColumnB[0].color = "green"
+                    this.ColumnB[1].color = "green"
+                } else if (this.ColumnB[0].value == this.ColumnB[2].value){
+                    totalMulti = this.ColumnB[0].value * 2
+                    this.ColumnB[0].color = "green"
+                    this.ColumnB[2].color = "green"
+                } else if(this.ColumnB[1].value == this.ColumnB[2].value){
+                    totalMulti = this.ColumnB[1].value * 2
+                    this.ColumnB[1].color = "green"
+                    this.ColumnB[2].color = "green"
                 }
             }
 
@@ -215,19 +269,30 @@ export default {
 
             if(this.ColumnC[0].value == this.ColumnC[1].value && this.ColumnC[0].value == this.ColumnC[2].value){
                 totalMulti = this.ColumnC[0].value * 3
+                totalMulti += totalMulti
+
+                this.ColumnC[0].color = "red"
+                this.ColumnC[1].color = "red"
+                this.ColumnC[2].color = "red"
             } else {
-                if(this.ColumnC[0].value == this.ColumnC[1].value || this.ColumnC[0].value == this.ColumnC[2].value){
+                if (this.ColumnC[0].value == this.ColumnC[1].value){
                     totalMulti = this.ColumnC[0].value * 2
-                } else {
-                    if(this.ColumnC[1].value == this.ColumnC[2].value){
-                        totalMulti = this.ColumnC[1].value * 2
-                    }
+                    this.ColumnC[0].color = "green"
+                    this.ColumnC[1].color = "green"
+                } else if (this.ColumnC[0].value == this.ColumnC[2].value){
+                    totalMulti = this.ColumnC[0].value * 2
+                    this.ColumnC[0].color = "green"
+                    this.ColumnC[2].color = "green"
+                } else if(this.ColumnC[1].value == this.ColumnC[2].value){
+                    totalMulti = this.ColumnC[1].value * 2
+                    this.ColumnC[1].color = "green"
+                    this.ColumnC[2].color = "green"
                 }
             }
 
             total += totalIndependente + totalMulti
 
-            this.$emit('AtualizaPlacar', this.player, total)
+            this.$emit('AtualizaPlacar', this.Player.id, total)
             this.verifyAll()
         },
         async verifyAll(){
