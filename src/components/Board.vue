@@ -1,52 +1,121 @@
 <template>
     <div>
-        <v-btn
-            v-if="!isGoing && !showNames"
-            @click="NewGame"
-            class="mx-2"
-            dark
-            color="indigo"
-            > Novo Jogo
-                <v-icon dark>
-                    mdi-plus
-                </v-icon>
-            </v-btn>
 
-        <br>
-
-        <v-row v-if="showNames">
-            <v-col
-            cols="12"
-            sm="6"
-            md="3"
-            >
-            <v-text-field v-model="Player1.Name"
-                label="Player 1"
-            ></v-text-field>
-            </v-col>
-            <v-col
-            cols="12"
-            sm="6"
-            md="3"
-            >
-            <v-text-field v-model="Player2.Name"
-                label="Player 2"
-            ></v-text-field>
+        <v-overlay :value="isLoading">
+        <v-progress-circular
+            indeterminate
+            size="64"
+        ></v-progress-circular>
+        </v-overlay>
+        
+        <v-row>
+            <v-col>
+                <v-btn
+                    v-if="!isGoing && !OngoingMatch"
+                    @click="NewGame"
+                    class="mx-2 black--text"
+                    dark
+                    color="white"
+                    > Novo Jogo
+                        <v-icon dark>
+                            mdi-plus
+                        </v-icon>
+                </v-btn>
             </v-col>
             <v-col>
                 <v-btn
-                @click="StartGame"
-                class="mx-2"
-                dark
-                color="indigo"
-                > Novo Jogo
-                    <v-icon dark>
-                        mdi-plus
-                    </v-icon>
+                    v-if="!isGoing && !OngoingMatch"
+                    @click="ShowMyGames"
+                    class="mx-2 black--text"
+                    dark
+                    color="white"
+                    > Meus jogos
+                        <v-icon dark>
+                            mdi-magnify
+                        </v-icon>
                 </v-btn>
             </v-col>
         </v-row>
 
+        <v-row v-if="!isGoing && !OngoingMatch">
+            <v-data-table v-if="myMatches.length > 0"
+                :headers="[{
+                    text: 'Id',
+                    align: 'start',
+                    sortable: false,
+                    value: 'id',
+                },{
+                    text: 'Data',
+                    align: 'start',
+                    sortable: false,
+                    value: 'data',
+                },{
+                    text: 'Player 1',
+                    align: 'start',
+                    sortable: false,
+                    value: 'player1',
+                },{
+                    text: 'Player 2',
+                    align: 'start',
+                    sortable: false,
+                    value: 'player2',
+                }]"
+                :items="myMatches"
+                :items-per-page="15"
+                class="elevation-1"
+            ></v-data-table>
+        </v-row>
+        
+
+        <br>
+
+        <v-card>
+            <v-row v-if="OngoingMatch">
+                <v-col>
+                    <v-text-field v-model="OngoingMatch.Match.id" disabled
+                        label="Partida Id"
+                    ></v-text-field>
+                </v-col>
+                <v-col>
+                    <v-text-field v-model="OngoingMatch.Match.token" disabled
+                        label="Token"
+                    ></v-text-field>
+                </v-col>
+                <v-col>
+                    <v-text-field v-text="'Aguardando 2° Player'" disabled v-if="OngoingMatch.Match.status == 0"
+                        label="Status"
+                    ></v-text-field>
+                    <v-text-field v-text="'Em andamento'" disabled v-else-if="OngoingMatch.Match.status == 1"
+                        label="Status"
+                    ></v-text-field>
+                    <v-text-field v-text="'Partida finalizada'" disabled v-else-if="OngoingMatch.Match.status == 2"
+                        label="Status"
+                    ></v-text-field>
+                    <v-text-field v-text="'Partida expirada'" disabled v-else-if="OngoingMatch.Match.status == 3"
+                        label="Status"
+                    ></v-text-field>
+                </v-col>
+            </v-row>
+
+            <v-row v-if="OngoingMatch">
+                <v-data-table v-if="OngoingMatch.Events"
+                :headers="[{
+                    text: 'Id',
+                    align: 'start',
+                    sortable: false,
+                    value: 'id',
+                },{
+                    text: 'Descrição',
+                    align: 'start',
+                    sortable: false,
+                    value: 'description',
+                }]"
+                :items="OngoingMatch.Events"
+                :items-per-page="5"
+                class="elevation-1"
+            ></v-data-table>
+            </v-row>
+        </v-card>
 
         <div v-if="isFinished">
             FIM DE JOGO!
@@ -76,6 +145,10 @@
 import ColumnsComponent from './Colums.vue'
 import DiceComponent from './Dice.vue'
 
+import axios from 'axios'
+
+import { getRoute } from '../js/util'
+
 export default {
     name: 'BoardComponent',
     data(){
@@ -94,23 +167,65 @@ export default {
       },
       isGoing: false,
       isFinished: false,
-      showNames: false,
+
+      isLoading: false,
+
+      OngoingMatch: null,
+      MatchId: null,
+      myMatches: []
     }
+    },
+    props:{
+      User: Object
     },
     components: {
         ColumnsComponent,
         DiceComponent
     },
     methods:{
-        NewGame(){
-            this.showNames = true
+        async NewGame(){
+            this.isLoading = true
+            await axios.post(getRoute('match/create'), {
+                player: this.User.id
+            }).then( response => {
+                this.MatchId = response.data.id
+                setInterval(() => {
+                    this.getOngoingMatch(this.MatchId)                    
+                }, 2500);
+            }).catch(err => {      
+                console.log(err.response.data)  
+                this.isLoading = false
+            })
+        },
+        async ShowMyGames(){
+            this.isLoading = true
+            await axios.post(getRoute('match/read'), {
+                player1: this.User.id
+            }).then( response => {
+                this.myMatches = response.data
+                this.isLoading = false
+            }).catch(err => {      
+                console.log(err.response.data)  
+                this.isLoading = false
+            })
+        },
+        async getOngoingMatch(id){
+            await axios.post(getRoute('match/readone'), {
+                id: id
+            }).then( response => {
+                console.log(response.data)
+                this.OngoingMatch = response.data
+                this.isLoading = false
+            }).catch(err => {      
+                console.log(err.response.data)  
+                this.isLoading = false
+            })
         },
         StartGame(){
             if(!this.Player1.Name || !this.Player2.Name){
                 console.log('erro')
                 return
             }
-            this.showNames = false
             this.isGoing = true
             this.isFinished = false
             this.playerStarting = Math.floor(Math.random() * 2)

@@ -2,7 +2,7 @@
   <v-container>
     <LogoComponent />
     <p v-if="User">Bem-vindo, {{User.login}}</p>
-    <BoardComponent />
+    <BoardComponent v-if="User" :User="User" />
   </v-container>
 </template>
 
